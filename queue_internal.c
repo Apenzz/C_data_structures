@@ -27,16 +27,15 @@ void queue_internal_destroy(queue_internal *q) {
     free(q);
 }
 
-void queue_internal_enqueue(queue_internal *q, const void *elem) {
-    if (!q || !elem) return;
+bool queue_internal_enqueue(queue_internal *q, const void *elem) {
+    if (!q || !elem) return false;
     // check if enough space in the queue
     if (q->capacity <= q->count) {
         size_t old_capacity = q->capacity;
         size_t new_capacity = old_capacity * 2;
         void *new_data = realloc(q->data, q->element_size * new_capacity);
         if (!new_data) {
-            fprintf(stderr, "Couldn't not resize queue: realloc failed\n");
-            return;
+            return false;
         }
         q->data = new_data;
         // if the queue has wrapped around , we need to unwrap it
@@ -51,6 +50,7 @@ void queue_internal_enqueue(queue_internal *q, const void *elem) {
     memcpy(next, elem, q->element_size);
     q->back = (q->back + 1) % q->capacity;
     q->count++;
+    return true;
 }
 
 bool queue_internal_dequeue(queue_internal *q, void *elem) {

@@ -18,7 +18,7 @@ queue_internal *queue_internal_new(size_t element_size);
 
 void queue_internal_destroy(queue_internal *q);
 
-void queue_internal_enqueue(queue_internal *q, const void *element);
+bool queue_internal_enqueue(queue_internal *q, const void *element);
 
 bool queue_internal_dequeue(queue_internal *q, void *element);
 
