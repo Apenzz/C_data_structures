@@ -1,25 +1,41 @@
 #ifndef __STACK_H__
 #define __STACK_H__
 
-#include <stdbool.h>
-#include <stddef.h>
+#include "stack_internal.h"
 
-typedef struct Stack *Stack;
+#define STACK(type) \
+    struct { \
+        stack_internal *_internal; \
+        (type) *_type_check; \
+    }
 
-Stack stack_new(size_t element_size, size_t initial_cap);
+#define stack_init(stack, type, init_cap) \
+    do { \
+        (stack)._internal = stack_internal_new(sizeof(type), (init_cap)); \
+        (stack)._type_check = NULL; \
+    } while(0)
 
-void stack_free(Stack s);
+#define stack_destroy(stack) \
+    stack_internal_free((stack)._internal) \
 
-bool stack_pop(Stack s, void *elem);
+#define stack_pop(stack, element_ptr) \
+    stack_internal_pop((stack)._internal, (element_ptr)) 
 
-void stack_push(Stack s, const void *elem);
+#define stack_push(stack, element) ({ \
+    __typeof__(*(stack)._type_check) _s_tmp = (element) \
+    stack_internal_push((stack)._internal, &(_s_tmp)) \
+})
 
-bool stack_peek(Stack s, void *elem);
+#define stack_peek(stack, element_ptr) \
+    stack_internal_peek((stack)._internal, (element_ptr))
 
-bool stack_is_empty(Stack s);
+#define stack_is_empty(stack) \
+    stack_internal_is_empty((stack)._internal)
 
-size_t stack_size(Stack s);
+#define stack_size(stack) \
+    stack_internal_size((stack)._internal)
 
-void stack_clear(Stack s);
+#define stack_clear(stack) \
+    stack_internal_clear((stack)._internal)
 
 #endif
