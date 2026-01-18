@@ -3,17 +3,9 @@
 #include <string.h>
 
 #include "queue.h"
+#include "tests.h"
 
-#define TEST_START(name) printf("Running test: %s... ", name)
-#define TEST_END() printf("PASSED\n")
-#define ASSERT(exp, msg) if (!(exp)) { printf("\nFAIL: %s\n", msg); return; }
-
-typedef struct {
-    int id;
-    char name[20];
-} Person;
-
-void test_basic_int() {
+void test_basic_int_queue() {
     TEST_START("BASIC INTEGER FIFO");
     QUEUE(int) q;
     queue_init(q, int); 
@@ -34,17 +26,17 @@ void test_basic_int() {
     TEST_END();
 }
 
-void test_struct_handling() {
+void test_struct_handling_queue() {
     TEST_START("Generic struct handling");
-    QUEUE(Person) q;
-    queue_init(q, Person);
+    QUEUE(_Test_Person) q;
+    queue_init(q, _Test_Person);
 
-    Person p1 = {1, "Alice"};
-    Person p2 = {2, "Bob"};
+    _Test_Person p1 = {1, "Alice"};
+    _Test_Person p2 = {2, "Bob"};
     queue_enqueue(q, p1);
     queue_enqueue(q, p2);
 
-    Person out;
+    _Test_Person out;
     queue_dequeue(q, &out);
     ASSERT(out.id == 1 && strcmp(out.name, "Alice") == 0, "Struct data mismatch");
 
@@ -52,7 +44,7 @@ void test_struct_handling() {
     TEST_END();
 }
 
-void test_wrap_around_and_resize() {
+void test_wrap_around_and_resize_queue() {
     TEST_START("Circular wrap-around and dynamic resize");
     // initial capacity is 1
     QUEUE(int) q;
@@ -84,7 +76,7 @@ void test_wrap_around_and_resize() {
     TEST_END();
 }
 
-void test_empty_peek() {
+void test_empty_peek_queue() {
     TEST_START("Empty and peek operations");
     QUEUE(double) q;
     queue_init(q, double);
@@ -102,10 +94,3 @@ void test_empty_peek() {
     TEST_END();
 }
 
-int main() {
-    test_basic_int();
-    test_struct_handling();
-    test_wrap_around_and_resize();
-    test_empty_peek();
-    return 0;
-}

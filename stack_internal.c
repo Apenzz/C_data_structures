@@ -4,17 +4,11 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "stack.h"
 
-struct Stack {
-    void *data; // pointer to beginning of stack area
-    size_t element_size; // size of one element in bytes
-    size_t capacity; // max number of elements that can fit in currect stack before resizing
-    size_t top; // index of current 'top' element | number of elements in the stack
-};
+#include "stack_internal.h"
 
-struct Stack *stack_new(size_t element_size, size_t initial_cap) {
-    struct Stack *s = malloc(sizeof(*s));
+stack_internal *stack_internal_new(size_t element_size, size_t initial_cap) {
+    stack_internal *s = malloc(sizeof(*s));
     if (!s) return NULL;
     s->data = malloc(element_size * initial_cap);
     if (!(s->data)) {
@@ -27,28 +21,28 @@ struct Stack *stack_new(size_t element_size, size_t initial_cap) {
     return s;
 }
 
-bool stack_pop(struct Stack *s, void *elem) {
-    if (!s || !elem || stack_is_empty(s)) return false;
+bool stack_internal_pop(stack_internal *s, void *elem) {
+    if (!s || !elem || stack_internal_is_empty(s)) return false;
     s->top--;
     void *source = (char *)s->data + (s->top * s->element_size); 
     memcpy(elem, source, s->element_size);
     return true;
 }
 
-bool stack_peek(struct Stack *s, void *elem) {
-    if (!s || !elem || stack_is_empty(s)) return false;
+bool stack_internal_peek(stack_internal *s, void *elem) {
+    if (!s || !elem || stack_internal_is_empty(s)) return false;
     void *head = (char *)s->data + (s->element_size * (s->top - 1));
     memcpy(elem, head, s->element_size);
     return true;
 }
 
-void stack_push(struct Stack *s, const void *elem) {
+void stack_internal_push(stack_internal *s, const void *elem) {
     if (!s || !elem) return;
-    // resize stack if size too small to add new entry
+    // resize stack_internal if size too small to add new entry
     if (s->capacity <= s->top) {
         void *new_data = realloc(s->data, (s->capacity * 2) * s->element_size);
         if (!new_data) {
-            fprintf(stderr, "Could not resize stack: realloc failed\n");
+            fprintf(stderr, "Could not resize stack_internal: realloc failed\n");
             return;
         } 
         s->data = new_data; 
@@ -59,22 +53,22 @@ void stack_push(struct Stack *s, const void *elem) {
     s->top++;
 }
 
-bool stack_is_empty(struct Stack *s) {
+bool stack_internal_is_empty(stack_internal *s) {
     if (!s) return true;
     return (!(s->top));
 }
 
-size_t stack_size(struct Stack *s) {
+size_t stack_internal_size(stack_internal *s) {
     if (!s) return 0;
     return s->top;
 }
 
-void stack_free(struct Stack *s) {
+void stack_internal_free(stack_internal *s) {
     free(s->data);
     free(s); 
 }
 
-void stack_clear(struct Stack *s) {
+void stack_internal_clear(stack_internal *s) {
     if (!s) return;
     s->top = 0;
 }
