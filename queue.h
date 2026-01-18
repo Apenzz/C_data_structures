@@ -20,30 +20,20 @@
 
 #define queue_enqueue(queue, element) \
     do { \
-        __typeof__(*(queue._type_check)) _elem = (element); \
-        queue_internal_enqueue((queue)._internal, &_elem); \
+        __typeof__(*((queue)._type_check)) _q_tmp = (element); \
+        queue_internal_enqueue((queue)._internal, &(_q_tmp)); \
     } while(0)
 
-#define queue_dequeue(queue, element) \
-    do { \
-        __typeof__(*(queue._type_check)) _elem = (element); \
-        queue_internal_dequeue((queue)._internal, & elem); \
-    } while(0)
+#define queue_dequeue(queue, element_ptr) \
+    queue_internal_dequeue((queue)._internal, (element_ptr))
 
-#define queue_peek(queue, element) \
-    do { \
-       __typeof__(*(queue._type_check)) _elem = (element); \
-       queue_internal_peek((queue)._internal, &elem); \
-    } while(0) 
+#define queue_peek(queue, element_ptr) \
+   queue_internal_peek((queue)._internal, (element_ptr))
 
 #define queue_is_empty(queue) \
-    do { \
-        queue_internal_is_empty((queue)._internal) \
-    } while(0) 
+    queue_internal_is_empty((queue)._internal)
 
 #define queue_size(queue) \
-    do { \
-        queue_internal_size((queue)._internal) \
-    } while(0)
+    queue_internal_size((queue)._internal)
 
 #endif
