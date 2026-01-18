@@ -6,7 +6,7 @@
 #define STACK(type) \
     struct { \
         stack_internal *_internal; \
-        (type) *_type_check; \
+        type *_type_check; \
     }
 
 #define stack_init(stack, type, init_cap) \
@@ -22,8 +22,8 @@
     stack_internal_pop((stack)._internal, (element_ptr)) 
 
 #define stack_push(stack, element) ({ \
-    __typeof__(*(stack)._type_check) _s_tmp = (element) \
-    stack_internal_push((stack)._internal, &(_s_tmp)) \
+    __typeof__(*(stack)._type_check) _s_tmp = (element); \
+    stack_internal_push((stack)._internal, &(_s_tmp)); \
 })
 
 #define stack_peek(stack, element_ptr) \
